@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TURNIAZ - Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f8fb;
+      color: #1f2d3d;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(27, 67, 103, 0.08);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #21496b;
+    }
+
+    .topbar p {
+      margin: 6px 0 0 0;
+      color: #587087;
+      font-size: 15px;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #21496b;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .function-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding: 16px 18px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(27, 67, 103, 0.08);
+    }
+
+    .function-tab {
+      border: none;
+      background: #eaf2fa;
+      color: #21496b;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .function-tab:hover,
+    .function-tab.active {
+      background: #21496b;
+      color: #fff;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(27, 67, 103, 0.08);
+      display: none;
+    }
+
+    .card.open {
+      display: block;
+    }
+
+    .card h2 {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      color: #21496b;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #34556f;
+    }
+
+    select,
+    input {
+      width: 100%;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid #cdd8e2;
+      padding: 0 12px;
+      font-size: 14px;
+      background: #fbfdff;
+    }
+
+    select:disabled,
+    input:disabled {
+      background: #eef3f7;
+      color: #7b8fa3;
+      cursor: not-allowed;
+    }
+
+    button.action-btn {
+      margin-top: 4px;
+      height: 44px;
+      border: none;
+      border-radius: 10px;
+      background: #77a8d4;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.action-btn:hover {
+      background: #6296c6;
+    }
+
+    .results {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(27, 67, 103, 0.08);
+      min-height: 220px;
+    }
+
+    .results h2 {
+      margin-top: 0;
+      color: #21496b;
+    }
+
+    .placeholder {
+      color: #698194;
+      line-height: 1.7;
+    }
+
+    .result-title {
+      margin: 0 0 16px 0;
+      font-size: 20px;
+      color: #21496b;
+    }
+
+    .mini-info {
+      margin: 0 0 18px 0;
+      color: #587087;
+    }
+
+    .helper-text {
+      margin: 0;
+      color: #698194;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e6edf3;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef5fb;
+      color: #284b68;
+    }
+
+    .single-box {
+      background: #f7fbff;
+      border: 1px solid #d9e7f3;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #b42318;
+      font-weight: 700;
+    }
+
+    .shift-highlight {
+      font-weight: 800;
+      color: #b42318;
+      background: #fde7e7;
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-block;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .export-wrap {
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .export-btn {
+      border: none;
+      background: #21496b;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .export-btn:hover {
+      background: #17354f;
+    }
+
+    @media (max-width: 980px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <h1 id="welcomeText">Ciao, come posso aiutarti?</h1>
+        <p>Consulta i turni per giorno, mese, anno, giornata completa o settimana completa.</p>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="function-bar">
+      <button class="function-tab active" data-target="cardSingle">Turno risorsa per giorno</button>
+      <button class="function-tab" data-target="cardMonth">Turni risorsa per mese</button>
+      <button class="function-tab" data-target="cardYear">Turni risorsa per anno</button>
+      <button class="function-tab" data-target="cardAllDay">Tutte le risorse per giorno</button>
+      <button class="function-tab" data-target="cardWeek">Tutte le risorse per settimana</button>
+      <button class="function-tab" data-target="cardSearchShift">Cerca turno</button>
+    </div>
+
+    <div class="section-grid">
+      <div class="card open" id="cardSingle">
+        <h2>Turno di una risorsa per un giorno</h2>
+        <div class="row">
+          <label for="resDay">Risorsa</label>
+          <select id="resDay"></select>
+
+          <label for="dateSingle">Data</label>
+          <input type="date" id="dateSingle" min="2026-01-01" max="2026-12-31" />
+
+          <button class="action-btn" id="btnSingleDay">Cerca</button>
+        </div>
+      </div>
+
+      <div class="card" id="cardMonth">
+        <h2>Turni di una risorsa per un mese</h2>
+        <div class="row">
+          <label for="resMonth">Risorsa</label>
+          <select id="resMonth"></select>
+
+          <label for="monthSelect">Mese</label>
+          <select id="monthSelect">
+            <option value="1">Gennaio</option>
+            <option value="2">Febbraio</option>
+            <option value="3">Marzo</option>
+            <option value="4">Aprile</option>
+            <option value="5">Maggio</option>
+            <option value="6">Giugno</option>
+            <option value="7">Luglio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Settembre</option>
+            <option value="10">Ottobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Dicembre</option>
+          </select>
+
+          <button class="action-btn" id="btnMonth">Cerca</button>
+        </div>
+      </div>
+
+      <div class="card" id="cardYear">
+        <h2>Tutti i turni 2026 di una risorsa</h2>
+        <div class="row">
+          <label for="resYear">Risorsa</label>
+          <select id="resYear"></select>
+
+          <button class="action-btn" id="btnYear">Cerca</button>
+        </div>
+      </div>
+
+      <div class="card" id="cardAllDay">
+        <h2>Turni di tutte le risorse per un giorno</h2>
+        <div class="row">
+          <label for="dateAllDay">Data</label>
+          <input type="date" id="dateAllDay" min="2026-01-01" max="2026-12-31" />
+
+          <button class="action-btn" id="btnAllDay">Cerca</button>
+        </div>
+      </div>
+
+      <div class="card" id="cardWeek">
+        <h2>Turni di tutte le risorse per una settimana</h2>
+        <div class="row">
+          <label for="weekDate">Scegli un giorno della settimana</label>
+          <input type="date" id="weekDate" min="2026-01-01" max="2026-12-31" />
+
+          <button class="action-btn" id="btnWeek">Cerca</button>
+        </div>
+      </div>
+
+      <div class="card" id="cardSearchShift">
+        <h2>Cerca un turno specifico in un giorno</h2>
+        <div class="row">
+          <label for="searchShiftDate">Data</label>
+          <input type="date" id="searchShiftDate" min="2026-01-01" max="2026-12-31" />
+
+          <label for="searchShiftCode">Codice turno</label>
+          <select id="searchShiftCode" disabled>
+            <option value="">Prima seleziona una data</option>
+          </select>
+
+          <p class="helper-text" id="searchShiftHint">
+            Scegli una data: il menu proporrà automaticamente tutti i codici turno presenti in quel giorno.
+          </p>
+
+          <button class="action-btn" id="btnSearchShift">Cerca</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results" id="results">
+      <h2>Risultati</h2>
+      <p class="placeholder">Qui compariranno le risposte alle tue richieste.</p>
+    </div>
+  </div>
+
+  <script>
+    const utente = localStorage.getItem("utenteLoggato");
+    const welcomeText = document.getElementById("welcomeText");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const results = document.getElementById("results");
+
+    const resDay = document.getElementById("resDay");
+    const resMonth = document.getElementById("resMonth");
+    const resYear = document.getElementById("resYear");
+    const functionTabs = document.querySelectorAll(".function-tab");
+    const functionCards = document.querySelectorAll(".card");
+    const searchShiftDate = document.getElementById("searchShiftDate");
+    const searchShiftCode = document.getElementById("searchShiftCode");
+    const searchShiftHint = document.getElementById("searchShiftHint");
+
+    let cachedShiftSearchRows = [];
+    let cachedShiftSearchDate = "";
+
+    if (!utente) {
+      window.location.href = "/";
+    } else {
+      welcomeText.textContent = `Ciao ${utente}, come posso aiutarti?`;
+    }
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("utenteLoggato");
+      window.location.href = "/";
+    });
+
+    functionTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        functionTabs.forEach(t => t.classList.remove("active"));
+        functionCards.forEach(card => card.classList.remove("open"));
+        tab.classList.add("active");
+        const target = document.getElementById(tab.dataset.target);
+        if (target) target.classList.add("open");
+      });
+    });
+
+    function formatShiftCode(shiftCode) {
+      const safe = shiftCode ?? "";
+      if (safe === "GF" || safe === "RI") {
+        return `<span class="shift-highlight">${safe}</span>`;
+      }
+      return safe;
+    }
+
+    function normalizeShiftCode(shiftCode) {
+      return String(shiftCode ?? "").trim().toUpperCase();
+    }
+
+    function exportCurrentResultToPdf() {
+      const title = document.querySelector('.results .result-title')?.textContent || 'Risultati TURNIAZ';
+      const printable = results.cloneNode(true);
+      const exportWrap = printable.querySelector('.export-wrap');
+      if (exportWrap) exportWrap.remove();
+
+      const win = window.open('', '_blank');
+      if (!win) {
+        alert('Impossibile aprire la finestra di stampa per esportare il PDF.');
+        return;
+      }
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html lang="it">
+        <head>
+          <meta charset="UTF-8">
+          <title>${title}</title>
+          <style>
+            body { font-family: Arial, Helvetica, sans-serif; padding: 24px; color: #1f2d3d; }
+            h2 { color: #21496b; margin-top: 0; }
+            p { color: #587087; }
+            table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px; }
+            th, td { border: 1px solid #d9e3ec; padding: 8px; text-align: left; vertical-align: top; }
+            th { background: #eef5fb; color: #21496b; }
+            .single-box { border: 1px solid #d9e7f3; padding: 14px; border-radius: 10px; }
+            .shift-highlight { font-weight: 800; color: #b42318; background: #fde7e7; padding: 2px 7px; border-radius: 999px; display: inline-block; }
+          </style>
+        </head>
+        <body>
+          ${printable.innerHTML}
+        </body>
+        </html>
+      `);
+      win.document.close();
+      win.focus();
+      setTimeout(() => {
+        win.print();
+      }, 300);
+    }
+
+    function appendExportButton() {
+      results.insertAdjacentHTML('beforeend', `
+        <div class="export-wrap">
+          <button class="export-btn" id="exportPdfBtn">Esporta in PDF</button>
+        </div>
+      `);
+      document.getElementById('exportPdfBtn')?.addEventListener('click', exportCurrentResultToPdf);
+    }
+
+    async function loadResources() {
+      try {
+        const response = await fetch("/api/resources");
+        const data = await response.json();
+
+        const names = data.resources.map(r => r.name).sort((a, b) => a.localeCompare(b));
+
+        [resDay, resMonth, resYear].forEach(select => {
+          select.innerHTML = `<option value="">Seleziona una risorsa</option>`;
+          names.forEach(name => {
+            const option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+          });
+        });
+      } catch (error) {
+        results.innerHTML = `<p class="error">Errore nel caricamento delle risorse.</p>`;
+      }
+    }
+
+    function renderError(message) {
+      results.innerHTML = `<h2>Risultati</h2><p class="error">${message}</p>`;
+    }
+
+    function renderSingleDay(data) {
+      results.innerHTML = `
+        <h2 class="result-title">Turno giornaliero</h2>
+        <p class="mini-info"><strong>Risorsa:</strong> ${data.resource} | <strong>Data:</strong> ${data.date}</p>
+        <div class="single-box">
+          <p><strong>Codice turno:</strong> ${formatShiftCode(data.shift.shift_code)}</p>
+          <p><strong>Giorno:</strong> ${data.shift.day}</p>
+          <p><strong>Mese:</strong> ${data.shift.month_name}</p>
+          <p><strong>Sigla giorno settimana:</strong> ${data.shift.weekday_code}</p>
+        </div>
+      `;
+      appendExportButton();
+    }
+
+    function renderTable(title, info, rows, columns) {
+      let thead = "<tr>";
+      columns.forEach(col => {
+        thead += `<th>${col.label}</th>`;
+      });
+      thead += "</tr>";
+
+      let tbody = "";
+      rows.forEach(row => {
+        tbody += "<tr>";
+        columns.forEach(col => {
+          const value = row[col.key] ?? "";
+          tbody += `<td>${value}</td>`;
+        });
+        tbody += "</tr>";
+      });
+
+      results.innerHTML = `
+        <h2 class="result-title">${title}</h2>
+        <p class="mini-info">${info}</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>${thead}</thead>
+            <tbody>${tbody}</tbody>
+          </table>
+        </div>
+      `;
+      appendExportButton();
+    }
+
+    function renderYearGrid(data) {
+      const monthOrder = [
+        "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+        "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+      ];
+
+      const monthMap = {};
+      monthOrder.forEach(month => {
+        monthMap[month] = {};
+      });
+
+      data.shifts.forEach(shift => {
+        monthMap[shift.month_name][String(shift.day)] = `${shift.weekday_code} ${formatShiftCode(shift.shift_code)}`;
+      });
+
+      let thead = '<tr><th>Giorno</th>';
+      monthOrder.forEach(month => {
+        thead += `<th>${month}</th>`;
+      });
+      thead += '</tr>';
+
+      let tbody = '';
+      for (let day = 1; day <= 31; day++) {
+        tbody += `<tr><td><strong>${day}</strong></td>`;
+        monthOrder.forEach(month => {
+          tbody += `<td>${monthMap[month][day] ?? ''}</td>`;
+        });
+        tbody += '</tr>';
+      }
+
+      results.innerHTML = `
+        <h2 class="result-title">Tutti i turni 2026 di ${data.resource}</h2>
+        <p class="mini-info">Anno: 2026 | Totale righe: ${data.count}</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>${thead}</thead>
+            <tbody>${tbody}</tbody>
+          </table>
+        </div>
+      `;
+      appendExportButton();
+    }
+
+    function renderWeekGrid(data) {
+      const weekDays = [
+        { key: 1, label: 'Lunedì' },
+        { key: 2, label: 'Martedì' },
+        { key: 3, label: 'Mercoledì' },
+        { key: 4, label: 'Giovedì' },
+        { key: 5, label: 'Venerdì' },
+        { key: 6, label: 'Sabato' },
+        { key: 0, label: 'Domenica' }
+      ];
+
+      const resourceMap = {};
+
+      data.rows.forEach(row => {
+        if (!resourceMap[row.resource_name]) {
+          resourceMap[row.resource_name] = {
+            resource_name: row.resource_name,
+            contract_hours: row.contract_hours
+          };
+        }
+
+        const jsDay = new Date(row.date + 'T00:00:00').getDay();
+        resourceMap[row.resource_name][`day_${jsDay}`] = formatShiftCode(row.shift_code);
+      });
+
+      const sortedRows = Object.values(resourceMap).sort((a, b) =>
+        a.resource_name.localeCompare(b.resource_name, 'it')
+      );
+
+      let thead = '<tr><th>Risorsa</th><th>Ore</th>';
+      weekDays.forEach(day => {
+        thead += `<th>${day.label}</th>`;
+      });
+      thead += '</tr>';
+
+      let tbody = '';
+      sortedRows.forEach(row => {
+        tbody += `<tr><td>${row.resource_name}</td><td>${row.contract_hours ?? ''}</td>`;
+        weekDays.forEach(day => {
+          tbody += `<td>${row[`day_${day.key}`] ?? ''}</td>`;
+        });
+        tbody += '</tr>';
+      });
+
+      results.innerHTML = `
+        <h2 class="result-title">Turni settimanali di tutte le risorse</h2>
+        <p class="mini-info">Dal ${data.start} al ${data.end} | Totale risorse: ${sortedRows.length}</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>${thead}</thead>
+            <tbody>${tbody}</tbody>
+          </table>
+        </div>
+      `;
+      appendExportButton();
+    }
+
+    function renderShiftSearch(date, shiftCode, rows) {
+      const filteredRows = rows
+        .filter(row => normalizeShiftCode(row.shift_code) === normalizeShiftCode(shiftCode))
+        .map(row => ({
+          ...row,
+          shift_code: formatShiftCode(row.shift_code)
+        }))
+        .sort((a, b) => a.resource_name.localeCompare(b.resource_name, 'it'));
+
+      if (!filteredRows.length) {
+        results.innerHTML = `
+          <h2 class="result-title">Ricerca turno</h2>
+          <p class="mini-info"><strong>Data:</strong> ${date} | <strong>Turno:</strong> ${formatShiftCode(shiftCode)}</p>
+          <p class="placeholder">Nessuna risorsa trovata per questo turno nel giorno selezionato.</p>
+        `;
+        appendExportButton();
+        return;
+      }
+
+      renderTable(
+        `Risorse con turno ${shiftCode}`,
+        `Data: ${date} | Totale risorse: ${filteredRows.length}`,
+        filteredRows,
+        [
+          { key: "resource_name", label: "Risorsa" },
+          { key: "contract_hours", label: "Ore" },
+          { key: "shift_code", label: "Turno" },
+          { key: "weekday_code", label: "Sett." }
+        ]
+      );
+    }
+
+    async function populateShiftCodesForDate(date) {
+      searchShiftCode.innerHTML = `<option value="">Caricamento codici turno...</option>`;
+      searchShiftCode.disabled = true;
+      searchShiftHint.textContent = "Sto leggendo i turni del giorno selezionato per proporti i codici disponibili.";
+
+      if (!date) {
+        cachedShiftSearchRows = [];
+        cachedShiftSearchDate = "";
+        searchShiftCode.innerHTML = `<option value="">Prima seleziona una data</option>`;
+        searchShiftCode.disabled = true;
+        searchShiftHint.textContent = "Scegli una data: il menu proporrà automaticamente tutti i codici turno presenti in quel giorno.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/turni/all/day/${date}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Errore nella ricerca.");
+        }
+
+        cachedShiftSearchRows = Array.isArray(data.rows) ? data.rows : [];
+        cachedShiftSearchDate = date;
+
+        const uniqueCodes = [...new Set(
+          cachedShiftSearchRows
+            .map(row => normalizeShiftCode(row.shift_code))
+            .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b, 'it'));
+
+        searchShiftCode.innerHTML = `<option value="">Seleziona un codice turno</option>`;
+
+        if (!uniqueCodes.length) {
+          searchShiftCode.innerHTML = `<option value="">Nessun codice disponibile</option>`;
+          searchShiftCode.disabled = true;
+          searchShiftHint.textContent = "Per questa data non risultano turni disponibili.";
+          return;
+        }
+
+        uniqueCodes.forEach(code => {
+          const option = document.createElement("option");
+          option.value = code;
+          option.textContent = code;
+          searchShiftCode.appendChild(option);
+        });
+
+        searchShiftCode.disabled = false;
+        searchShiftHint.textContent = `Trovati ${uniqueCodes.length} codici turno disponibili per il giorno ${date}.`;
+      } catch (error) {
+        cachedShiftSearchRows = [];
+        cachedShiftSearchDate = "";
+        searchShiftCode.innerHTML = `<option value="">Errore caricamento codici</option>`;
+        searchShiftCode.disabled = true;
+        searchShiftHint.textContent = "Non sono riuscito a caricare i codici turno per la data scelta.";
+      }
+    }
+
+    function getWeekRange(selectedDate) {
+      const date = new Date(selectedDate + "T00:00:00");
+      const day = date.getDay();
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+
+      const monday = new Date(date);
+      monday.setDate(date.getDate() + diffToMonday);
+
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      const format = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      };
+
+      return {
+        start: format(monday),
+        end: format(sunday)
+      };
+    }
+
+    document.getElementById("btnSingleDay").addEventListener("click", async () => {
+      const resource = resDay.value;
+      const date = document.getElementById("dateSingle").value;
+
+      if (!resource || !date) {
+        return renderError("Seleziona risorsa e data.");
+      }
+
+      try {
+        const response = await fetch(`/api/turni/resource/${encodeURIComponent(resource)}/day/${date}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          return renderError(data.error || "Errore nella ricerca.");
+        }
+
+        renderSingleDay(data);
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    document.getElementById("btnMonth").addEventListener("click", async () => {
+      const resource = resMonth.value;
+      const month = document.getElementById("monthSelect").value;
+
+      if (!resource || !month) {
+        return renderError("Seleziona risorsa e mese.");
+      }
+
+      try {
+        const response = await fetch(`/api/turni/resource/${encodeURIComponent(resource)}/month/${month}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          return renderError(data.error || "Errore nella ricerca.");
+        }
+
+        const monthRows = data.shifts.map(row => ({ ...row, shift_code: formatShiftCode(row.shift_code) }));
+        renderTable(
+          `Turni mensili di ${data.resource}`,
+          `Mese: ${data.month_name} | Totale righe: ${data.count}`,
+          monthRows,
+          [
+            { key: "date", label: "Data" },
+            { key: "day", label: "Giorno" },
+            { key: "weekday_code", label: "Sett." },
+            { key: "shift_code", label: "Turno", isHtml: true }
+          ]
+        );
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    document.getElementById("btnYear").addEventListener("click", async () => {
+      const resource = resYear.value;
+
+      if (!resource) {
+        return renderError("Seleziona una risorsa.");
+      }
+
+      try {
+        const response = await fetch(`/api/turni/resource/${encodeURIComponent(resource)}/year/2026`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          return renderError(data.error || "Errore nella ricerca.");
+        }
+
+        renderYearGrid(data);
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    document.getElementById("btnAllDay").addEventListener("click", async () => {
+      const date = document.getElementById("dateAllDay").value;
+
+      if (!date) {
+        return renderError("Seleziona una data.");
+      }
+
+      try {
+        const response = await fetch(`/api/turni/all/day/${date}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          return renderError(data.error || "Errore nella ricerca.");
+        }
+
+        const allDayRows = data.rows.map(row => ({ ...row, shift_code: formatShiftCode(row.shift_code) }));
+        renderTable(
+          `Turni di tutte le risorse`,
+          `Data: ${data.date} | Totale righe: ${data.count}`,
+          allDayRows,
+          [
+            { key: "resource_name", label: "Risorsa" },
+            { key: "contract_hours", label: "Ore" },
+            { key: "shift_code", label: "Turno", isHtml: true },
+            { key: "weekday_code", label: "Sett." }
+          ]
+        );
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    document.getElementById("btnWeek").addEventListener("click", async () => {
+      const date = document.getElementById("weekDate").value;
+
+      if (!date) {
+        return renderError("Seleziona una data della settimana.");
+      }
+
+      const range = getWeekRange(date);
+
+      try {
+        const response = await fetch(`/api/turni/all/week?start=${range.start}&end=${range.end}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          return renderError(data.error || "Errore nella ricerca.");
+        }
+
+        renderWeekGrid(data);
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    searchShiftDate.addEventListener("change", async () => {
+      await populateShiftCodesForDate(searchShiftDate.value);
+    });
+
+    document.getElementById("btnSearchShift").addEventListener("click", async () => {
+      const date = searchShiftDate.value;
+      const shiftCode = searchShiftCode.value;
+
+      if (!date) {
+        return renderError("Seleziona una data per la ricerca turno.");
+      }
+
+      if (!shiftCode) {
+        return renderError("Seleziona un codice turno.");
+      }
+
+      try {
+        if (cachedShiftSearchDate !== date || !cachedShiftSearchRows.length) {
+          await populateShiftCodesForDate(date);
+        }
+
+        renderShiftSearch(date, shiftCode, cachedShiftSearchRows);
+      } catch (error) {
+        renderError("Errore di connessione.");
+      }
+    });
+
+    loadResources();
+  </script>
+</body>
+</html>

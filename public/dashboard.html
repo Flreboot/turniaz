@@ -256,6 +256,123 @@
       background: #17354f;
     }
 
+    .compare-selectors {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .compare-column {
+      background: #f7fbff;
+      border: 1px solid #d9e7f3;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .compare-column h3 {
+      margin: 0;
+      padding: 14px 16px;
+      background: #eef5fb;
+      color: #21496b;
+      font-size: 16px;
+      border-bottom: 1px solid #d9e7f3;
+    }
+
+    .compare-list {
+      max-height: 620px;
+      overflow-y: auto;
+    }
+
+    .compare-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e6edf3;
+      font-size: 14px;
+    }
+
+    .compare-item:last-child {
+      border-bottom: none;
+    }
+
+    .compare-day {
+      color: #587087;
+      font-weight: 700;
+      min-width: 52px;
+    }
+
+    .compare-table-wrap {
+      margin-top: 14px;
+      overflow-x: auto;
+      border: 1px solid #d9e7f3;
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .compare-table {
+      width: 100%;
+      min-width: 1100px;
+      margin-top: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .compare-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #eef5fb;
+      text-align: center;
+      font-size: 15px;
+      padding: 14px 10px;
+    }
+
+    .compare-table thead th:first-child {
+      text-align: left;
+      min-width: 120px;
+    }
+
+    .compare-table tbody tr:nth-child(even) td {
+      background: #f9fcff;
+    }
+
+    .compare-table td {
+      vertical-align: middle;
+    }
+
+    .compare-date {
+      font-weight: 700;
+      color: #21496b;
+      white-space: nowrap;
+    }
+
+    .compare-weekday {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 12px;
+      color: #698194;
+      font-weight: 700;
+    }
+
+    .compare-shift-cell {
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .compare-empty {
+      color: #9aaaba;
+      font-weight: 500;
+    }
+
     @media (max-width: 980px) {
       .section-grid {
         grid-template-columns: 1fr;
@@ -264,6 +381,11 @@
       .topbar {
         flex-direction: column;
         align-items: flex-start;
+      }
+
+      .compare-selectors,
+      .compare-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -285,6 +407,7 @@
       <button class="function-tab" data-target="cardAllDay">Tutte le risorse per giorno</button>
       <button class="function-tab" data-target="cardWeek">Tutte le risorse per settimana</button>
       <button class="function-tab" data-target="cardSearchShift">Cerca turno</button>
+      <button class="function-tab" data-target="cardCompare">Confronta turni</button>
     </div>
 
     <div class="section-grid">
@@ -375,6 +498,54 @@
           <button class="action-btn" id="btnSearchShift">Cerca</button>
         </div>
       </div>
+
+      <div class="card" id="cardCompare">
+        <h2>Confronta i turni di più risorse in un mese</h2>
+        <div class="row">
+          <label for="compareMonthSelect">Mese</label>
+          <select id="compareMonthSelect">
+            <option value="1">Gennaio</option>
+            <option value="2">Febbraio</option>
+            <option value="3">Marzo</option>
+            <option value="4">Aprile</option>
+            <option value="5">Maggio</option>
+            <option value="6">Giugno</option>
+            <option value="7">Luglio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Settembre</option>
+            <option value="10">Ottobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Dicembre</option>
+          </select>
+
+          <div class="compare-selectors">
+            <div>
+              <label for="compareRes1">Risorsa 1</label>
+              <select id="compareRes1"></select>
+            </div>
+            <div>
+              <label for="compareRes2">Risorsa 2</label>
+              <select id="compareRes2"></select>
+            </div>
+            <div>
+              <label for="compareRes3">Risorsa 3</label>
+              <select id="compareRes3"></select>
+            </div>
+            <div>
+              <label for="compareRes4">Risorsa 4</label>
+              <select id="compareRes4"></select>
+            </div>
+            <div>
+              <label for="compareRes5">Risorsa 5</label>
+              <select id="compareRes5"></select>
+            </div>
+          </div>
+
+          <p class="helper-text">Puoi scegliere da 2 fino a 5 risorse. Selezionane almeno 2 e poi premi confronta.</p>
+
+          <button class="action-btn" id="btnCompare">Confronta</button>
+        </div>
+      </div>
     </div>
 
     <div class="results" id="results">
@@ -392,6 +563,11 @@
     const resDay = document.getElementById("resDay");
     const resMonth = document.getElementById("resMonth");
     const resYear = document.getElementById("resYear");
+    const compareRes1 = document.getElementById("compareRes1");
+    const compareRes2 = document.getElementById("compareRes2");
+    const compareRes3 = document.getElementById("compareRes3");
+    const compareRes4 = document.getElementById("compareRes4");
+    const compareRes5 = document.getElementById("compareRes5");
     const functionTabs = document.querySelectorAll(".function-tab");
     const functionCards = document.querySelectorAll(".card");
     const searchShiftDate = document.getElementById("searchShiftDate");
@@ -491,7 +667,7 @@
 
         const names = data.resources.map(r => r.name).sort((a, b) => a.localeCompare(b));
 
-        [resDay, resMonth, resYear].forEach(select => {
+        [resDay, resMonth, resYear, compareRes1, compareRes2, compareRes3, compareRes4, compareRes5].forEach(select => {
           select.innerHTML = `<option value="">Seleziona una risorsa</option>`;
           names.forEach(name => {
             const option = document.createElement("option");
@@ -743,6 +919,74 @@
       }
     }
 
+    function renderCompareGrid(resources, monthName, monthNumber) {
+      const normalizedResources = resources.map(resource => {
+        const dayMap = {};
+        resource.shifts.forEach(shift => {
+          dayMap[String(shift.day)] = {
+            date: shift.date,
+            weekday_code: shift.weekday_code,
+            shift_code: shift.shift_code,
+            contract_hours: shift.contract_hours
+          };
+        });
+
+        const contractHours = resource.contract_hours ?? resource.shifts?.[0]?.contract_hours ?? '';
+        return { ...resource, dayMap, contract_hours: contractHours };
+      });
+
+      const daysInMonth = new Date(2026, Number(monthNumber), 0).getDate();
+
+      let thead = `
+        <tr>
+          <th>Giorno</th>
+          ${normalizedResources.map(resource => `
+            <th>
+              <div>${resource.resource}</div>
+              <div style="margin-top:4px;font-size:12px;color:#698194;font-weight:700;">${resource.contract_hours ? `${resource.contract_hours}h` : ''}</div>
+            </th>
+          `).join('')}
+        </tr>
+      `;
+
+      let tbody = '';
+      for (let day = 1; day <= daysInMonth; day++) {
+        const baseDate = `2026-${String(monthNumber).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const weekday = normalizedResources.find(resource => resource.dayMap[String(day)]?.weekday_code)?.dayMap[String(day)]?.weekday_code || '';
+
+        tbody += `
+          <tr>
+            <td class="compare-date">
+              ${String(day).padStart(2, '0')}
+              ${weekday ? `<span class="compare-weekday">${weekday}</span>` : ''}
+            </td>
+        `;
+
+        normalizedResources.forEach(resource => {
+          const shift = resource.dayMap[String(day)];
+          tbody += `
+            <td class="compare-shift-cell">
+              ${shift ? formatShiftCode(shift.shift_code) : '<span class="compare-empty">—</span>'}
+            </td>
+          `;
+        });
+
+        tbody += '</tr>';
+      }
+
+      results.innerHTML = `
+        <h2 class="result-title">Confronto turni mensili</h2>
+        <p class="mini-info">Mese: ${monthName} | Risorse confrontate: ${normalizedResources.length} | Vista comparativa allineata per giorno</p>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>${thead}</thead>
+            <tbody>${tbody}</tbody>
+          </table>
+        </div>
+      `;
+      appendExportButton();
+    }
+
     function getWeekRange(selectedDate) {
       const date = new Date(selectedDate + "T00:00:00");
       const day = date.getDay();
@@ -922,6 +1166,46 @@
         renderShiftSearch(date, shiftCode, cachedShiftSearchRows);
       } catch (error) {
         renderError("Errore di connessione.");
+      }
+    });
+
+    document.getElementById("btnCompare").addEventListener("click", async () => {
+      const month = document.getElementById("compareMonthSelect").value;
+      const selectedResources = [
+        compareRes1.value,
+        compareRes2.value,
+        compareRes3.value,
+        compareRes4.value,
+        compareRes5.value
+      ]
+        .filter(Boolean)
+        .filter((value, index, array) => array.indexOf(value) === index);
+
+      if (!month) {
+        return renderError("Seleziona un mese.");
+      }
+
+      if (selectedResources.length < 2) {
+        return renderError("Seleziona almeno 2 risorse da confrontare.");
+      }
+
+      try {
+        const responses = await Promise.all(
+          selectedResources.map(resource =>
+            fetch(`/api/turni/resource/${encodeURIComponent(resource)}/month/${month}`)
+              .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                  throw new Error(data.error || `Errore nella ricerca di ${resource}.`);
+                }
+                return data;
+              })
+          )
+        );
+
+        renderCompareGrid(responses, responses[0]?.month_name || '', month);
+      } catch (error) {
+        renderError(error.message || "Errore di connessione.");
       }
     });
 

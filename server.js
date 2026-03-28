@@ -241,5 +241,5 @@ app.get("/api/turni/all/week", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log("Server attivo su http://localhost:" + PORT);
+  console.log("Server attivo su http://0.0.0.0:" + PORT);
 });
